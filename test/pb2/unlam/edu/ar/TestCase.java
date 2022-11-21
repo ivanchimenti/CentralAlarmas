@@ -9,6 +9,7 @@ public class TestCase {
         Central central = new Central("PAS Seguridad");
         Usuario usuarioAdm = new Administrador(16996589, "Antonio");
         Alarma alarma = new Alarma(1174, "I1912A", "T1416M", "Casa");
+
         central.registrarUsuario(usuarioAdm);
         assertTrue(((Administrador) usuarioAdm).registrarAlarmaEnLaCentral(central, alarma));
     }
@@ -40,7 +41,7 @@ public class TestCase {
     }
 
     @Test (expected = SensorDuplicadoException.class)
-    public void queAlAgregarUnSensorDuplicadoEnUnaAlarmaSeLanceUnaExcepcion() throws SensorDuplicadoException {
+    public void queAlAgregarUnSensorDuplicadoEnUnaAlarmaSeLanceUnaExcepcion() throws SensorDuplicadoException, UsuarioYaRegistradoException, UsuarioNoRegistradoException {
         Central central = new Central("PAS Seguridad");
         Usuario usuarioAdm = new Administrador(16996589, "Antonio");
         Alarma alarma = new Alarma(1174, "I1912A", "T1416M", "Casa");
@@ -48,13 +49,16 @@ public class TestCase {
         Sensor sensor2 = new Sensor(2823, true);
         Sensor sensor3 = new Sensor(4462, true);
 
+        central.registrarUsuario(usuarioAdm);
+        ((Administrador) usuarioAdm).registrarAlarmaEnLaCentral(central, alarma);
+
         ((Administrador) usuarioAdm).agregarSensorAUnaAlarma(alarma, sensor1);
         ((Administrador) usuarioAdm).agregarSensorAUnaAlarma(alarma, sensor2);
         ((Administrador) usuarioAdm).agregarSensorAUnaAlarma(alarma, sensor3);
     }
 
     @Test
-    public void queNoSePuedaActivarLaAlarmaSiHayAlMenosUnSensorDesactivado() throws SensorDuplicadoException, IdAlarmaIncorrectoException {
+    public void queNoSePuedaActivarLaAlarmaSiHayAlMenosUnSensorDesactivado() throws SensorDuplicadoException, IdAlarmaIncorrectoException, CodigoActDesactIncorrectoExpection, UsuarioYaRegistradoException, UsuarioNoRegistradoException {
         Central central = new Central("PAS Seguridad");
         Usuario usuarioAdm = new Administrador(16996589, "Antonio");
         Alarma alarma = new Alarma(1174, "IA1912", "TM1416", "Casa");
@@ -63,13 +67,15 @@ public class TestCase {
         Sensor sensor3 = new Sensor(6455, false);
         Sensor sensor4 = new Sensor(6532, true);
 
+        central.registrarUsuario(usuarioAdm);
+        ((Administrador) usuarioAdm).registrarAlarmaEnLaCentral(central, alarma);
+
         ((Administrador) usuarioAdm).agregarSensorAUnaAlarma(alarma, sensor1);
         ((Administrador) usuarioAdm).agregarSensorAUnaAlarma(alarma, sensor2);
         ((Administrador) usuarioAdm).agregarSensorAUnaAlarma(alarma, sensor3);
         ((Administrador) usuarioAdm).agregarSensorAUnaAlarma(alarma, sensor4);
 
-        ((Administrador) usuarioAdm).actDesactAlarma(central, 1174, "IA1912");
-
+        assertFalse(((Administrador) usuarioAdm).actDesactAlarma(central, 1174, "IA1912"));
 
     }
 }

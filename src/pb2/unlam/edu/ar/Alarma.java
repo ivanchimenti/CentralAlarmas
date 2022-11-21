@@ -62,4 +62,5 @@ public class Alarma {
     public void registrarSensor(Sensor sensor){
         this.sensores.add(sensor);
     }
+
 }

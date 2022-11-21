@@ -42,7 +42,17 @@ public class Administrador extends Usuario {
         }
     }
 
-    public void actDesactAlarma(Central central, Integer idAlarma, String codActDesact) throws IdAlarmaIncorrectoException {
+    public Boolean actDesactAlarma(Central central, Integer idAlarma, String codActDesact) throws IdAlarmaIncorrectoException, CodigoActDesactIncorrectoExpection {
         Alarma alarma = central.obtenerAlarmaPorId(idAlarma);
+        if (alarma.getCodActDesact().equals(codActDesact)){
+            for (Sensor s : alarma.getSensores()){
+                if (s.getEstado().equals(false)){
+                    return false;
+                }
+            }
+        } else {
+            throw new CodigoActDesactIncorrectoExpection("El codigo de activacion y desactivacion de la alarma ingresado es incorrecto");
+        }
+        return true;
     }
 }
